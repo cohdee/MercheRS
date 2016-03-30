@@ -1,0 +1,24 @@
+body {
+    padding-top: 50px;
+    background-color: #333;
+}
+
+#itemInput {
+    width: 100%;
+    height: 3em;
+}
+
+#searchContainer {
+    padding: 40px 15px;
+    display: table;
+    width: 40%;
+}
+
+#dataBox {
+    color: #fff;
+}
+
+.col-center {
+    margin: auto;
+    float: none;
+}

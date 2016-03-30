@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+        <script src="items.js"></script>
+        <script src="jquery.easy-autocomplete.min.js"></script>
+        <link rel="stylesheet" href="easy-autocomplete.min.css"> 
+        <link rel="stylesheet" href="easy-autocomplete.themes.min.css">
+    </head>
+    <body>
+
+        <h2>Pull JSON data</h2>
+
+        <select id="comboBox"></select>
+
+        <br />
+
+        <input id="itemInput" type="text" required/>
+        <button onclick="loadAPI()">test</button>
+        
+        <br/>
+        
+        <div id="dataBox"></div>
+
+        <script>
+            var itemList = items;
+            var itemID;
+            for (var i in itemList){
+                $('#comboBox').append(new Option(itemList[i].name, itemList[i].id));
+            }
+            
+            $("#comboBox").html($("#comboBox option").sort(function (a, b) {
+                return a.text == b.text ? 0 : a.text < b.text ? -1 : 1
+            }));
+            
+            $('#comboBox').change(function(){
+                var selected = $('#comboBox option:selected').text();
+                console.log(selected);
+                for (var item in itemList){
+                    if (itemList.hasOwnProperty(item)) {
+                        if (selected == itemList[item].name){
+                            itemID = itemList[item].id;
+                        }
+                    }
+                }
+                
+                var url = "https://api.rsbuddy.com/grandExchange?a=guidePrice&i=" + itemID;
+                
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    dataType: "json",
+                    crossDomain : true,
+                    xhrFields: {
+                        withCredentials: false
+                    },
+                    success: function(result,status,xhr){
+                        $("#dataBox").append("<br />");
+                        $("#dataBox").append("ITEM NAME: " + selected + "<br />" + JSON.stringify(result) + "<br />");
+                        //console.log(itemName)
+                        console.log("API Request status: " + status);
+                        console.log(url);
+                        //console.log(xhr);
+                    },
+                    error: function(xhr,status,error){
+                        $("#dataBox").append("FAIL <br />");
+                        $("#dataBox").append(xhr);
+                        console.log("API Request status: " + status);
+                        console.log(url);
+                        //console.log(error);
+                    }
+                    
+               });
+            });
+            
+            
+            var options = {
+                url: "items.json",
+                dataType: 'json',
+                getValue: "name",
+                list: {
+                    match: {
+                        enabled: true
+                    }
+                }
+            };
+
+            $("#itemInput").easyAutocomplete(options);
+            
+            
+            
+            
+            
+            
+            
+            
+            function loadAPI(){
+                var itemID = document.getElementById('itemInput').value;
+                var url = "https://api.rsbuddy.com/grandExchange?a=guidePrice&i=" + itemID;
+                var itemName = "NOT FOUND";
+              
+                for (var item in itemList){
+                    if (itemList.hasOwnProperty(item)) {
+                        if (itemList[item].id == itemID){
+                            itemName = itemList[item].name;
+                        }
+                    }
+                }
+                
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    dataType: "json",
+                    crossDomain : true,
+                    xhrFields: {
+                        withCredentials: false
+                    },
+                    success: function(result,status,xhr){
+                        $("#dataBox").append("<br />");
+                        $("#dataBox").append(JSON.stringify(result) + "ITEM NAME: " + itemName);
+                        console.log(itemName)
+                        console.log("API Request status: " + status);
+                        console.log(url);
+                        //console.log(xhr);
+                    },
+                    error: function(xhr,status,error){
+                        $("#dataBox").append("FAIL <br />");
+                        $("#dataBox").append(xhr);
+                        console.log("API Request status: " + status);
+                        console.log(url);
+                        //console.log(error);
+                    }
+                    
+               });
+
+            };
+        </script>
+
+    </body>
+</html>
